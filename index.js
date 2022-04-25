@@ -42,6 +42,35 @@ client.connect(err => {
         res.send(result);
     })
 
+    // delete a single product
+    app.delete("/products/:id", async (req, res) => {
+        const id = req.params.id;
+        const query = { _id: ObjectId(id) };
+        const result = await productCollection.deleteOne(query);
+        res.send(result);
+    });
+
+    //update product data
+    app.put("/products/:id", async (req, res) => {
+        const id = req.params.id;
+        const product = req.body;
+        const filter = { _id: ObjectId(id) };
+        const options = { upsert: true };
+        const updateFile = {
+            $set: {
+                name: product.name,
+                description: product.description
+            },
+        };
+        const result = await productCollection.updateOne(
+            filter,
+            updateFile,
+            options
+        );
+        res.send(result);
+    });
+
+
 
     // add new users (by registration) to database
     app.post('/users', async (req, res) => {
